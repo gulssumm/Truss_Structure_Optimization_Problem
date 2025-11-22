@@ -1,4 +1,4 @@
-import random
+import random, time
 
 # Generates the initial population for the 10-Bar Truss
 # Initialization
@@ -70,12 +70,67 @@ def crossover(parent1, parent2):
     else:
         return parent1, parent2
 
+# Mutation
+def mutation(individual):
+    for i in range(10):
+        if random.random() <= 0.1:       # 10% probability
+            individual[i] = random.uniform(0.01, 35.0)
+    return individual
+
+# Survivor Selection
+def survivor_selection(population, child1, child2):
+    worst_index = 0
+    max_fitness = -1
+
+    for i in range(len(population)):
+        current_fitness = calculate_fitness(population[i])
+        if current_fitness > max_fitness:
+            max_fitness = current_fitness
+            worst_index = i
+    population[worst_index] = child1
+
+    child1_index = worst_index
+    second_worst_index = 0
+    max_fitness = -1
+
+    for i in range(len(population)):
+        if i != child1_index:
+            current_fitness = calculate_fitness(population[i])
+            if current_fitness > max_fitness:
+                second_worst_index = i
+                max_fitness = current_fitness
+    population[second_worst_index] = child2
+
+    return population
+
 if __name__ == "__main__":
-    # 1.Initialize
+    POPULATION_SIZE = 50
+    GENERATIONS = 1000
+
     population = initialize_population()
 
-    # 2.Tournament
-    parent = tournament_selection(population)
-    print("Selected parent fitness: ", calculate_fitness(parent))
+    start_time = time.time()
+    for generation in range(GENERATIONS):
+        # SELECTION
+        parent1 = tournament_selection(population)
+        parent2 = tournament_selection(population)
 
-    # 3.Crossover
+        # REPRODUCTION
+        child1, child2 = crossover(parent1, parent2)
+
+        # MUTATION
+        child1 = mutation(child1)
+        child2 = mutation(child2)
+
+        # SURVIVOR SELECTION
+        survivor_selection(population, child1, child2)
+
+        all_fitness_scores = [calculate_fitness(i) for i in population]
+        best_score = min(all_fitness_scores)
+        print(f"Generation {generation}: Best Fitness = {best_score}")
+
+    end_time = time.time()
+    total_time = end_time - start_time
+    print(f"\nResults for {GENERATIONS} Generations")
+    print(f"Best Fitness: {best_score}")
+    print(f"Total time: {total_time: .4f} seconds")
