@@ -1,7 +1,7 @@
 import random
-import numpy as np
 
 # Generates the initial population for the 10-Bar Truss
+# Initialization
 def initialize_population(pop_size=50, num_vars=10, min_area=0.01, max_area=35.0):
     population = []  # population size = 50
     for _ in range(pop_size):
@@ -15,7 +15,7 @@ def initialize_population(pop_size=50, num_vars=10, min_area=0.01, max_area=35.0
 
     return population
 
-
+# Fitness Evaluation
 def calculate_fitness(individual):
     # Calculates the fitness F(X) for a single individual
     # Constants from the assignment
@@ -43,3 +43,39 @@ def calculate_fitness(individual):
     Fitness_F = W_X + Penalty_Term
 
     return Fitness_F
+
+# Selection
+def tournament_selection(population):
+    tournament_pool = random.sample(population, 5)
+    best_individual = tournament_pool[0]
+    best_fitness = calculate_fitness(best_individual)
+
+    for i in range(len(tournament_pool)):
+        current_individual = tournament_pool[i]
+        current_fitness = calculate_fitness(current_individual)
+
+        if current_fitness < best_fitness:
+            best_fitness = current_fitness
+            best_individual = current_individual
+
+    return best_individual
+
+# Crossover
+def crossover(parent1, parent2):
+    if random.random() <= 0.3:  # crossover possibility 30%
+        cut_point = random.randint(1, 9)              # random index
+        child1 = parent1[:cut_point] + parent2[cut_point:]
+        child2 = parent2[:cut_point] + parent1[cut_point:]
+        return child1, child2
+    else:
+        return parent1, parent2
+
+if __name__ == "__main__":
+    # 1.Initialize
+    population = initialize_population()
+
+    # 2.Tournament
+    parent = tournament_selection(population)
+    print("Selected parent fitness: ", calculate_fitness(parent))
+
+    # 3.Crossover
