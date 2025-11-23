@@ -105,9 +105,12 @@ def survivor_selection(population, child1, child2):
 
 if __name__ == "__main__":
     POPULATION_SIZE = 50
-    GENERATIONS = 1000
+    GENERATIONS = 5000
 
     population = initialize_population()
+
+    global_best_fitness = float('inf')
+    global_best_individual = []
 
     start_time = time.time()
     for generation in range(GENERATIONS):
@@ -126,11 +129,15 @@ if __name__ == "__main__":
         survivor_selection(population, child1, child2)
 
         all_fitness_scores = [calculate_fitness(i) for i in population]
-        best_score = min(all_fitness_scores)
-        print(f"Generation {generation}: Best Fitness = {best_score}")
+        current_best_score = min(all_fitness_scores)
+        if current_best_score < global_best_fitness:
+            global_best_fitness = current_best_score
+
+        if generation % 100 == 0:
+            print(f"Generation {generation}: Best Fitness = {current_best_score}")
 
     end_time = time.time()
     total_time = end_time - start_time
     print(f"\nResults for {GENERATIONS} Generations")
-    print(f"Best Fitness: {best_score}")
+    print(f"Best Fitness: {global_best_fitness}")
     print(f"Total time: {total_time: .4f} seconds")
