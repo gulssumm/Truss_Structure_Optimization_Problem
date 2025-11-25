@@ -48,3 +48,64 @@ def initialize_swarm(pop_size):
 
         swarm.append(particle)
     return swarm
+
+def pso_algorithm(max_iterations, pop_size):
+    # X(t+1) = X(t) + V(t+1)
+    # V(t+1) = wV(t) + c1×rand() × (Xpbest - X(t)) + c2×rand() × (Xgbest - X(t))
+    w = 0.7  # wV(t)
+    c1 = 2.0  # c1×rand() × (Xpbest - X(t))
+    c2 = 2.0  # c2×rand() × (Xgbest - X(t))
+
+    swarm = initialize_swarm(pop_size)
+
+    gbest_value = float('inf')
+    gbest_position = []
+    for particle in swarm:
+        particle_fitness = calculate_fitness(particle['position'])
+        # Update particle's memory
+        particle['fitness'] = particle_fitness
+        particle['pbest_value'] = particle_fitness
+        particle['pbest_position'] = particle['position'][:]
+        # Update global best
+        if particle_fitness < gbest_value:
+            gbest_value = particle_fitness
+            gbest_position = particle['position'][:]
+
+    for iteration in range(max_iterations):
+        for particle in swarm:
+            for i in range(10):
+                r1 = random.random()
+                r2 = random.random()
+
+                new_velocity = w*particle['velocity'][i] + c1*r1*(particle['pbest_position'][i] - particle['position'][i]) + c2*r2*(gbest_position[i] - particle['position'][i])
+
+                particle['velocity'][i] = new_velocity
+
+                new_position = particle['position'][i] + new_velocity
+
+                if new_position < 0.01: new_position = 0.01
+                if new_position > 35.0: new_position = 35.0
+                particle['position'][i] = new_position
+
+            new_fitness = calculate_fitness(particle['position'])
+            # personel best
+            if new_fitness < particle['pbest_value']:
+                particle['pbest_value'] = new_fitness
+                particle['pbest_position'] = particle['position'][:]
+
+            # global best
+            if new_fitness < gbest_value:
+                gbest_value = new_fitness
+                gbest_position = particle['position'][:]
+    return gbest_value
+
+if __name__ == "__main__":
+    max_iterations = 1000
+    pop_size = 50
+    start_time = time.time()
+    best_fitness = pso_algorithm(max_iterations, pop_size)
+    end_time = time.time()
+    total_time = end_time - start_time
+    print(f"PSO Results for {max_iterations} iterations:")
+    print(f"Best Fitness: {best_fitness}")
+    print(f"Total Time: {end_time - start_time:.4f} seconds")
