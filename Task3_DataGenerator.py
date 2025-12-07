@@ -3,6 +3,7 @@ import pandas as pd
 
 # Fitness Evaluation
 def calculate_fitness(individual):
+    
     # Calculates the fitness F(X) for a single individual
     # Constants from the assignment
     rho = 0.1  # Material density
