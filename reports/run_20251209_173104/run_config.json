@@ -1,0 +1,29 @@
+{
+  "DATA_FOLDER": "Noisy_16kHz_DynamicPadded_Segments",
+  "TARGET_SR": 16000,
+  "WINDOW_SEC": 1.0,
+  "HOP_SEC": 0.1,
+  "PAD_SIL_SEC": 1.5,
+  "MID_MIN_COVER_RATIO": 0.5,
+  "N_FFT": 1024,
+  "HOP_LEN_FEAT": 512,
+  "N_MELS": 20,
+  "FMIN_MEL": 100,
+  "FMAX_MEL": 6000,
+  "N_MFCC": 20,
+  "BP": {
+    "fmin": 100.0,
+    "fmax": 6000.0,
+    "order": 6
+  },
+  "TEST_SIZE": 0.2,
+  "RANDOM_STATE": 42,
+  "MODELS": [
+    "MLP_100-50-20_relu",
+    "RandomForest",
+    "KNN"
+  ],
+  "BALANCING": "SMOTE on non-silence classes, then downsample silence to Nmax",
+  "SAVE_PER_FEATURE_BEST": true,
+  "SHORT_FILENAMES": false
+}
